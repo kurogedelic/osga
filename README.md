@@ -2,7 +2,11 @@
 
 ## Overview
 
-Sound device
+organic sound generative architechture.
+
+## Install
+
+[osga-setup](https://github.com/hugelton/osga-setup)
 
 ## Requipments
 
@@ -18,7 +22,7 @@ Sound device
 
 ## Hardware
 
-osga-hardware
+[osga-hardware](https://github.com/hugelton/osga-hardware)
 
 ## Structure
 
