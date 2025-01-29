@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+
+# Project specific
+sublications/current/*
+!sublications/current/.gitkeep
+sublications/archive/*
+!sublications/archive/.gitkeep
+sublications/uploaded/*
+!sublications/uploaded/.gitkeep
+
+# OS
+.DS_Store
+*.log
