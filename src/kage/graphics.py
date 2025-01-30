@@ -80,7 +80,7 @@ class Kage:
         return self.width, self.height
 
     # 描画色設定
-    def setColor(self, color_name):
+    def set_color(self, color_name):
         if color_name in self.palette:
             self.current_color_index = self.palette[color_name]
         else:
