@@ -59,14 +59,21 @@ class Kage:
     def get_current_color(self):
         if self.current_rgb:  # 優先度: 直接指定 > パレット
             return self.current_rgb
-        color = self.colors.get(self.current_color, (0, 0, 0))
-        if self.alpha < 1.0:
-            return (*color, int(255 * self.alpha))
-        return color
+        # パレットの色を返す
+        if self.current_color_index in self.palette.values():
+            return self.palette_colors[self.current_color_index]
+        return self.palette_colors[0]  # デフォルトはBLACK
 
     # 基本操作
     def clear(self, color=0):
-        self.buffer.paste(self.colors[color], (0, 0, self.width, self.height))
+        # パレットのインデックスに対応する色を取得
+        if color in self.palette.values():
+            self.buffer.paste(color, (0, 0, self.width, self.height))
+        else:
+            print(f"Color index '{
+                  color}' not found in palette. Using default color (BLACK).")
+            self.buffer.paste(
+                self.palette['BLACK'], (0, 0, self.width, self.height))
 
     def send_buffer(self):
         if hasattr(self, 'fb'):
