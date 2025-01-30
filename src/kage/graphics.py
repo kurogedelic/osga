@@ -32,11 +32,9 @@ class Kage:
             2: 16,   # 標準
             3: 24    # 大
         }
-        try:
-            self.font = ImageFont.truetype("/usr/share/fonts/opentype/inter/InterDisplay-Regular.otf ",
-                                           self.font_sizes[self.font_size])
-        except:
-            self.font = ImageFont.load_default()
+
+        # Pillowのデフォルトフォントを使用
+        self.font = ImageFont.load_default()
 
     def get_current_color(self):
         if self.current_rgb:  # 優先度: 直接指定 > パレット
@@ -123,14 +121,12 @@ class Kage:
                            width=self.line_width)
 
     # テキスト描画関連
+
     def set_font_size(self, size):
         if size in self.font_sizes:
             self.font_size = size
-            try:
-                self.font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-                                               self.font_sizes[self.font_size])
-            except:
-                self.font = ImageFont.load_default()
+            # Pillowのデフォルトフォントを使用
+            self.font = ImageFont.load_default()
 
     def set_font_style(self, style):
         self.font_style = style  # 現在は使用していない
