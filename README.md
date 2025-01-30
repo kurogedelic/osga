@@ -1,90 +1,105 @@
 # osga : Organic Sound Generative Architecture
 
+![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
+
+** osga is work in progress. **
+
 ## Overview
 
-organic sound generative architechture.
+A modular architecture for creating organic, generative sound ecosystems. Combines physical computing with algorithmic synthesis for emergent audio experiences.
 
-## Install
+## Features
 
-[osga-setup](https://github.com/hugelton/osga-setup)
+- Modular Lua-based scripting system
+- Multi-sensor integration (IMU, touch)
+- Embedded graphics subsystem
+- Web interface for remote control
+- Expandable hardware architecture
 
-## Requipments
+## Hardware Architecture
 
-### Mainframe
+```mermaid
+graph TD
+    RP[ Raspberry Pi Zero W ] -->|SPI| LCD[ILI9341 320x240 LCD]
+    RP -->|I2S| DAC[MAX98357/PCM5102 Audio DAC]
+    RP -->|I2C| IMU[MPU6050 Gyro+Accel]
+    RP -->|GPIO| UI[Physical Interfaces]
+    DAC -->|Analog| SPK[Speaker]
+    IMU -->|Motion Data| RP
+    LCD -->|Display| VIZ[Visualizations]
+```
 
-- Raspberry Pi Zero W Family
+## Installation
 
-### Compotnents
+### System Setup
 
-- ILI9341 320x240
-- MPU6050
-- MAX98357 or PCM5102
+```bash
+cd ~
+wget https://raw.githubusercontent.com/hugelton/osga-setup/main/install.sh
+chmod +x install.sh
+./install.sh
+sudo reboot
+```
 
-## Hardware
+### Hardware Requirements
 
-[osga-hardware](https://github.com/hugelton/osga-hardware)
+| Component           | Interface | Purpose                   |
+| ------------------- | --------- | ------------------------- |
+| ILI9341 LCD         | SPI       | Visual feedback system    |
+| MPU6050             | I2C       | Motion sensing            |
+| MAX98357/PCM5102    | I2S       | High-quality audio output |
+| Raspberry Pi Zero W | -         | Main computing unit       |
 
-## Structure
+## Project Structure
 
-- osga # main system
-- | - osga-kage # display and graphics
-- | - osga-nami # audio and synth
-- | - osga-koto # sensor and physical interfaces
-- | - osga-torii # web server
-- | - osga-kumo # home app
+```
+osga/
+├── osga-kage/    # Display subsystem (TFT graphics)
+├── osga-nami/    # Audio synthesis engine
+├── osga-koto/    # Sensor interface layer
+├── osga-torii/   # Web server interface
+└── osga-kumo/    # Home automation integration
+```
 
-## Sublications
+## Sublications (Modules)
 
-### files
+Create modular components with this structure:
 
-for example "Block" is sublication name.
+```
+MyModule/
+├── main.lua      # Core logic
+├── icon.png      # 32x32px module icon
+└── info.json     # Metadata descriptor
+```
 
-Block/
-├── main.lua # main process
-├── icon.png # 32px icon
-└── info.json # sublication infomation
-
-#### icon.png
-
-32x32px PNG
-
-#### main.lua
+### Example Module (Block)
 
 ```lua
-block = {} // make instance table, must be same name on info.json
+block = {}
 
-local squareSize = 0
-
-// .init is must
 function block.init()
-    // running at once
+  -- Initialization logic
 end
 
-// display draw
 function block.draw()
-    kage.clear(0)                             // clear background
-    kage.drawBox(0,0,squareSize,squareSize)   // draw square
-    kage.draw()                               // send buffer
+  kage.clear(0)
+  kage.drawBox(0,0,squareSize,squareSize)
+  kage.draw()
 end
 
-// .update is must
 function block.update()
-    // running at framerate
-    if squareSize < 100 then
-        squareSize = squareSize + 1
-    end
+  -- Frame-based updates
 end
 ```
 
-#### info.json
+## Development
 
-```json
-{
-	"instance": "block",
-	"title": "Block",
-	"author": "John Appleseed",
-	"description": "Lorem ipsum",
-	"version": "1.0.0",
-	"tags": ["drone", "generative", "art"]
-}
-```
+## License
+
+This project is licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE) for full terms.
+
+## Community
+
+- Report issues: [GitHub Issues](https://github.com/hugelton/osga/issues)
+- Hardware designs: [osga-hardware](https://github.com/hugelton/osga-hardware)
+- Discussion forum: [OSGA Discourse](https://github.com/hugelton/osga/discussions/)
