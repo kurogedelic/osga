@@ -38,6 +38,19 @@ class Kage:
             time.sleep(wait_time)
         self.last_frame_time = time.time()
 
+    def _convert_rgb888_to_rgb565(self, data):
+        """RGB888をRGB565に変換"""
+        rgb565_data = bytearray(len(data) // 3 * 2)
+        for i in range(0, len(data), 3):
+            r = data[i]
+            g = data[i+1]
+            b = data[i+2]
+            # RGB565フォーマットに変換
+            rgb = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
+            rgb565_data[i//3*2] = rgb >> 8
+            rgb565_data[i//3*2+1] = rgb & 0xFF
+        return rgb565_data
+
     def clear(self):
         self.buffer.paste('black', (0, 0, self.width, self.height))
         self.draw_buffer()
