@@ -4,4 +4,3 @@ fastapi
 uvicorn
 python-multipart
 lupa  
-aggdraw
