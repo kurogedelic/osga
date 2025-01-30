@@ -51,18 +51,18 @@ class Kage:
             rgb565_data[i//3*2+1] = rgb & 0xFF
         return rgb565_data
 
-    def clear(self):
-        self.buffer.paste('black', (0, 0, self.width, self.height))
-        self.draw_buffer()
+    def clear(self, color=0):
+        fill_color = 'black' if color == 0 else 'white'
+        self.buffer.paste(fill_color, (0, 0, self.width, self.height))
+        self._draw_buffer()
 
-    def draw_buffer(self):
+    def _draw_buffer(self):
         if hasattr(self, 'fb'):
             data = self.buffer.tobytes()
             rgb565_data = self._convert_rgb888_to_rgb565(data)
             self.fb.seek(0)
             self.fb.write(rgb565_data)
             self.fb.flush()
-        self._wait_for_frame()
 
     def draw_square(self, x, y, size, is_primary=False):
         color = self.config.get(
