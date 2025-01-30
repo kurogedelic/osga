@@ -152,11 +152,9 @@ class Kage:
                       fill=self.get_current_color(),
                       width=self.line_width)
 
-    def draw_ellipse(self, x, y, rx, ry):
-        bbox = [x - rx, y - ry, x + rx, y + ry]
-        self.draw.ellipse(bbox,
-                          outline=self.get_current_color(),
-                          width=self.line_width)
+    def fill_circle(self, x, y, r):
+        brush = aggdraw.Brush("white")  # 塗りつぶし色
+        self.draw.ellipse((x-r, y-r, x+r, y+r), brush)
 
     # 描画属性
     def set_line_width(self, width):
