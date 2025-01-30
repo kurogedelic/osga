@@ -9,33 +9,18 @@ def main():
         kage = Kage()
         print("Kage initialized")
 
-        # カラーパレット定義 (RGB順)
-        palette = [
-            (0, 0, 0),        # 0: 黒
-            (255, 255, 255),  # 1: 白
-            (255, 0, 0),      # 2: 赤
-            (0, 255, 0),      # 3: 緑
-            (0, 0, 255),      # 4: 青
-            (255, 255, 0),    # 5: 黄
-            (0, 255, 255),    # 6: シアン
-            (255, 0, 255)     # 7: マゼンタ
-        ]
+        kage.clear(0)  # 画面を黒でクリア
 
-        print("Starting palette test...")
-        kage.clear(0)
-        time.sleep(1)
+        # 白丸の描画
+        kage.set_color(1)
+        kage.fill_circle(160, 120, 30)
 
-        # パレットを横並びで表示
-        start_x = 10
-        square_size = 40
-        spacing = 10
+        # テキストの描画
+        kage.set_font_size(2)
+        kage.draw_text(100, 200, "White Circle")
+        kage.send_buffer()
 
-        for idx, color in enumerate(palette):
-            x = start_x + (square_size + spacing) * idx
-            kage.set_color_rgb(*color)
-            kage.fill_rect(x, 100, square_size, square_size)
-            kage.send_buffer()
-            time.sleep(0.3)
+        time.sleep(3)  # 3秒間表示
 
         print("Test completed. Press Ctrl+C to exit.")
         while True:
