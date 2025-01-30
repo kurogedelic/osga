@@ -3,28 +3,47 @@ from lupa import LuaRuntime
 import time
 
 
-def create_kage_env(kage_instance):
-    lua = LuaRuntime(unpack_returned_tuples=True)
-    g = lua.globals()
+class KageLuaEngine:
+    def __init__(self, kage_instance):
+        self.kage = kage_instance
+        self.lua = LuaRuntime(unpack_returned_tuples=True)
+        self.setup_api()
+        self.frame_interval = 1.0 / 30  # 30 FPS
+        self.last_frame_time = time.time()
 
-    def clear():
-        kage_instance.clear()
+    def setup_api(self):
+        g = self.lua.globals()
 
-    def draw_square(x, y, size, is_primary=False):
-        kage_instance.draw_square(x, y, size, is_primary)
-        kage_instance.draw_buffer()
+        # Kage APIをテーブルとして提供
+        kage_api = {
+            'clear': self.kage.clear,
+            'draw_square': self.kage.draw_square,
+            'draw_text': self.kage.draw_text
+        }
+        g.kage = kage_api
 
-    def draw_text(text, x=None, y=None, center=False):
-        kage_instance.draw_text(text, x, y, center)
-        kage_instance.draw_buffer()
+    def load_script(self, script_path):
+        with open(script_path, 'r') as f:
+            self.lua.execute(f.read())
 
-    def sleep(seconds):
-        time.sleep(float(seconds))
+    def run(self):
+        # 初期化関数の呼び出し
+        if 'init' in self.lua.globals():
+            self.lua.globals().init()
 
-    # グローバル関数として登録
-    g.clear = clear
-    g.draw_square = draw_square
-    g.draw_text = draw_text
-    g.sleep = sleep  # sleep関数を追加
+        try:
+            while True:
+                current_time = time.time()
 
-    return lua
+                # updateの呼び出し
+                if 'update' in self.lua.globals():
+                    self.lua.globals().update()
+
+                # フレームレート制御
+                elapsed = time.time() - current_time
+                wait_time = self.frame_interval - elapsed
+                if wait_time > 0:
+                    time.sleep(wait_time)
+
+        except KeyboardInterrupt:
+            print("\nScript terminated by user")
