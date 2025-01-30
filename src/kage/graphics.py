@@ -1,3 +1,4 @@
+import aggdraw
 from PIL import Image, ImageDraw, ImageFont
 import math
 import colorsys
@@ -9,7 +10,7 @@ class Kage:
         self.height = 240
         self.fb = open('/dev/fb1', 'wb')
         self.buffer = Image.new('RGB', (self.width, self.height), 'black')
-        self.draw = ImageDraw.Draw(self.buffer)
+        self.draw = aggdraw.Draw(self.buffer)  # Pillow の Draw から aggdraw に変更
 
         # 描画属性
         self.current_color = 0
@@ -51,12 +52,9 @@ class Kage:
         self.buffer.paste(self.colors[color], (0, 0, self.width, self.height))
 
     def send_buffer(self):
-        if hasattr(self, 'fb'):
-            data = self.buffer.tobytes()
-            rgb565_data = self._convert_rgb888_to_rgb565(data)
-            self.fb.seek(0)
-            self.fb.write(rgb565_data)
-            self.fb.flush()
+        self.draw.flush()  # 変更点
+        self.fb.write(self.buffer.tobytes())
+        self.fb.flush()
 
     def get_size(self):
         return self.width, self.height
@@ -91,10 +89,9 @@ class Kage:
         self.draw.rectangle([x, y, x + w - 1, y + h - 1],
                             fill=self.get_current_color())
 
-    def draw_circle(self, x, y, r):
-        self.draw.ellipse([x - r, y - r, x + r, y + r],
-                          outline=self.get_current_color(),
-                          width=self.line_width)
+    def fill_circle(self, x, y, r):
+        brush = aggdraw.Brush("white")  # 塗りつぶし色
+        self.draw.ellipse((x-r, y-r, x+r, y+r), None, brush)
 
     def fill_circle(self, x, y, r):
         self.draw.ellipse([x - r, y - r, x + r, y + r],
@@ -136,9 +133,10 @@ class Kage:
         self.font_style = style  # 現在は使用していない
 
     def draw_text(self, x, y, text):
-        self.draw.text((x, y), str(text),
-                       font=self.font,
-                       fill=self.get_current_color())
+        img_draw = Image.new("RGBA", (self.width, self.height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img_draw)
+        draw.text((x, y), text, font=self.font, fill=(255, 255, 255, 255))
+        self.buffer.paste(img_draw, (0, 0), img_draw)
 
     def text_size(self, text):
         bbox = self.draw.textbbox((0, 0), str(text), font=self.font)
