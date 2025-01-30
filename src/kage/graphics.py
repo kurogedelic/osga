@@ -1,14 +1,15 @@
 from PIL import Image, ImageDraw
 
+
 class Kage:
     def __init__(self):
         self.width = 320
         self.height = 240
         try:
-            self.fb = open('/dev/fb0', 'wb')
+            self.fb = open('/dev/fb1', 'wb')  # fb0ではなくfb1を使用
         except:
-            print("Warning: Framebuffer not available, running in test mode")
-        
+            print("Warning: Secondary framebuffer not available, running in test mode")
+
         self.buffer = Image.new('RGB', (self.width, self.height), 'black')
         self.draw = ImageDraw.Draw(self.buffer)
         self.current_color = (255, 255, 255)
@@ -22,8 +23,8 @@ class Kage:
         self.current_color = (r, g, b)
 
     def drawBox(self, x, y, w, h):
-        self.draw.rectangle([x, y, x + w - 1, y + h - 1], 
-                          fill=self.current_color)
+        self.draw.rectangle([x, y, x + w - 1, y + h - 1],
+                            fill=self.current_color)
         self.draw_buffer()
 
     def draw_buffer(self):
