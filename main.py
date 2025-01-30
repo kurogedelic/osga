@@ -1,6 +1,7 @@
-# main.py 全修正
-from src.kage import Kage
+# main.py
 import time
+from src.kage import Kage
+from scripts.system.splash import Splash  # splash.py から Splash クラスをインポート
 
 
 def main():
@@ -9,19 +10,9 @@ def main():
         kage = Kage()
         print("Kage initialized")
 
-        kage.clear(0)  # 画面を黒でクリア
-
-        # 白丸の描画
-        kage.set_color(1)
-        kage.fill_circle(160, 120, 100)
-
-        # テキストの描画
-        kage.set_font_size(3)
-        kage.set_color(0)
-        kage.draw_text(100, 100, "osga")
-        kage.send_buffer()
-
-        time.sleep(3)  # 3秒間表示
+        # Splash クラスのインスタンスを作成して表示
+        splash = Splash(kage)
+        splash.show()
 
         print("Test completed. Press Ctrl+C to exit.")
         while True:
