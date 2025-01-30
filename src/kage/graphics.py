@@ -66,8 +66,7 @@ class Kage:
 
     # 基本操作
     def clear(self, color=0):
-        # パレットのインデックスに対応する色を取得
-        if color in self.palette.values():
+        if color in range(len(self.palette_colors)):  # パレットのインデックス範囲内かチェック
             self.buffer.paste(color, (0, 0, self.width, self.height))
         else:
             self.buffer.paste(
@@ -75,26 +74,28 @@ class Kage:
 
     def send_buffer(self):
         if hasattr(self, 'fb'):
-            data = self.buffer.tobytes()
-            rgb565_data = self._convert_rgb888_to_rgb565(data)
+            data = self.buffer.tobytes()  # Pモードのデータをそのまま取得
             self.fb.seek(0)
-            self.fb.write(rgb565_data)
+            self.fb.write(data)  # データをそのままフレームバッファに書き込む
             self.fb.flush()
 
     def get_size(self):
         return self.width, self.height
 
     # 描画色設定
-    def set_color(self, color_name):
-        if color_name in self.palette:
-            self.current_color_index = self.palette[color_name]
+    def set_color(self, color):
+        if isinstance(color, str):  # 色名が指定された場合
+            if color in self.palette:
+                self.current_color_index = self.palette[color]
+            else:
+                self.current_color_index = self.palette['BLACK']
+        elif isinstance(color, int):  # インデックス番号が指定された場合
+            if 0 <= color < len(self.palette_colors):  # インデックスが有効かチェック
+                self.current_color_index = color
+            else:
+                self.current_color_index = self.palette['BLACK']
         else:
-            print(
-                f"Color '{color_name}' not found in palette. Using default color (BLACK).")
             self.current_color_index = self.palette['BLACK']
-
-    def set_alpha(self, a):
-        self.alpha = max(0.0, min(1.0, a))
 
     # 図形描画
     def draw_pixel(self, x, y):
