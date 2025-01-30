@@ -13,11 +13,11 @@ def main():
 
         # 白丸の描画
         kage.set_color(1)
-        kage.fill_circle(160, 120, 30)
+        kage.fill_circle(160, 120, 100)
 
         # テキストの描画
-        kage.set_font_size(2)
-        kage.draw_text(100, 200, "White Circle")
+        kage.set_font_size(0)
+        kage.draw_text(100, 100, "osga")
         kage.send_buffer()
 
         time.sleep(3)  # 3秒間表示
