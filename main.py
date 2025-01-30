@@ -18,7 +18,7 @@ def main():
         # テキストの描画
         kage.set_font_size(3)
         kage.set_color(0)
-        kage.draw_text(120, 100, "osga")
+        kage.draw_text(100, 100, "osga")
         kage.send_buffer()
 
         time.sleep(3)  # 3秒間表示
