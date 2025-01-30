@@ -16,7 +16,8 @@ def main():
         kage.fill_circle(160, 120, 100)
 
         # テキストの描画
-        kage.set_font_size(0)
+        kage.set_font_size(3)
+        kage.set_color(0)
         kage.draw_text(100, 100, "osga")
         kage.send_buffer()
 
