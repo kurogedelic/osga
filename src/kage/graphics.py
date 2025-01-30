@@ -13,6 +13,7 @@ class Kage:
 
         # 描画属性
         self.current_color = 0
+        self.current_rgb = None  # 追加
         self.alpha = 1.0
         self.line_width = 1
         self.font_size = 2
@@ -38,7 +39,9 @@ class Kage:
             self.font = ImageFont.load_default()
 
     def get_current_color(self):
-        color = self.colors[self.current_color]
+        if self.current_rgb:  # 優先度: 直接指定 > パレット
+            return self.current_rgb
+        color = self.colors.get(self.current_color, (0, 0, 0))
         if self.alpha < 1.0:
             return (*color, int(255 * self.alpha))
         return color
@@ -61,6 +64,10 @@ class Kage:
     # 描画色設定
     def set_color(self, c):
         self.current_color = c if c in self.colors else 0
+        self.current_rgb = None  # パレット色使用時はRGBをリセット
+
+    def set_color_rgb(self, r, g, b):
+        self.current_rgb = (r, g, b)  # 直接RGB値を保持
 
     def set_alpha(self, a):
         self.alpha = max(0.0, min(1.0, a))
