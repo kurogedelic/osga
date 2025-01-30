@@ -70,8 +70,6 @@ class Kage:
         if color in self.palette.values():
             self.buffer.paste(color, (0, 0, self.width, self.height))
         else:
-            print(f"Color index '{
-                  color}' not found in palette. Using default color (BLACK).")
             self.buffer.paste(
                 self.palette['BLACK'], (0, 0, self.width, self.height))
 
