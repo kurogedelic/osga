@@ -1,30 +1,45 @@
-from PIL import Image, ImageDraw
+# src/kage/graphics.py
+from PIL import Image, ImageDraw, ImageFont
+import configparser
+import time
 
 
 class Kage:
     def __init__(self):
         self.width = 320
         self.height = 240
-        try:
-            self.fb = open('/dev/fb1', 'wb')  # fb0ではなくfb1を使用
-        except:
-            print("Warning: Secondary framebuffer not available, running in test mode")
+        self.config = self._load_config()
 
+        # フレームバッファの設定
+        try:
+            self.fb = open('/dev/fb1', 'wb')
+        except Exception as e:
+            print(f"Warning: Could not open framebuffer: {e}")
+
+        # バッファとカラー設定
         self.buffer = Image.new('RGB', (self.width, self.height), 'black')
         self.draw = ImageDraw.Draw(self.buffer)
-        self.current_color = (255, 255, 255)
+        self.last_frame_time = time.time()
+        self.frame_interval = 1.0 / self.config.getint('display', 'frame_rate')
 
-    def clear(self, color=0):
-        fill_color = 'black' if color == 0 else 'white'
-        self.buffer.paste(fill_color, (0, 0, self.width, self.height))
-        self.draw_buffer()
+        # フォント設定
+        self.font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                                       self.config.getint('display', 'font_size'))
 
-    def setColor(self, r, g, b):
-        self.current_color = (r, g, b)
+    def _load_config(self):
+        config = configparser.ConfigParser()
+        config.read('src/kage/config.ini')
+        return config
 
-    def drawBox(self, x, y, w, h):
-        self.draw.rectangle([x, y, x + w - 1, y + h - 1],
-                            fill=self.current_color)
+    def _wait_for_frame(self):
+        current_time = time.time()
+        wait_time = self.frame_interval - (current_time - self.last_frame_time)
+        if wait_time > 0:
+            time.sleep(wait_time)
+        self.last_frame_time = time.time()
+
+    def clear(self):
+        self.buffer.paste('black', (0, 0, self.width, self.height))
         self.draw_buffer()
 
     def draw_buffer(self):
@@ -34,18 +49,17 @@ class Kage:
             self.fb.seek(0)
             self.fb.write(rgb565_data)
             self.fb.flush()
+        self._wait_for_frame()
 
-    def _convert_rgb888_to_rgb565(self, data):
-        rgb565_data = bytearray(len(data) // 3 * 2)
-        for i in range(0, len(data), 3):
-            r = data[i]
-            g = data[i+1]
-            b = data[i+2]
-            rgb = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
-            rgb565_data[i//3*2] = rgb >> 8
-            rgb565_data[i//3*2+1] = rgb & 0xFF
-        return rgb565_data
+    def draw_square(self, x, y, size, is_primary=False):
+        color = self.config.get(
+            'colors', 'primary_color' if is_primary else 'base_color')
+        self.draw.rectangle([x, y, x + size - 1, y + size - 1], fill=color)
 
-    def __del__(self):
-        if hasattr(self, 'fb'):
-            self.fb.close()
+    def draw_text(self, text, x=None, y=None, center=False):
+        color = self.config.get('colors', 'base_color')
+        if center:
+            bbox = self.draw.textbbox((0, 0), text, font=self.font)
+            x = (self.width - (bbox[2] - bbox[0])) // 2
+            y = (self.height - (bbox[3] - bbox[1])) // 2
+        self.draw.text((x, y), text, font=self.font, fill=color)
