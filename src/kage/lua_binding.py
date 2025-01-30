@@ -1,4 +1,6 @@
+# src/kage/lua_binding.py
 from lupa import LuaRuntime
+import time
 
 
 def create_kage_env(kage_instance):
@@ -16,8 +18,13 @@ def create_kage_env(kage_instance):
         kage_instance.draw_text(text, x, y, center)
         kage_instance.draw_buffer()
 
+    def sleep(seconds):
+        time.sleep(float(seconds))
+
+    # グローバル関数として登録
     g.clear = clear
     g.draw_square = draw_square
     g.draw_text = draw_text
+    g.sleep = sleep  # sleep関数を追加
 
     return lua
