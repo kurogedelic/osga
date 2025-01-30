@@ -168,9 +168,9 @@ class Kage:
     def _convert_rgb888_to_rgb565(self, data):
         rgb565_data = bytearray(len(data) // 3 * 2)
         for i in range(0, len(data), 3):
-            r = data[i]
+            b = data[i]
             g = data[i+1]
-            b = data[i+2]
+            r = data[i+2]
             # ハードウェアがRGB順を期待している場合の修正
             rgb = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  # RGB順
             rgb565_data[i//3*2] = rgb >> 8
