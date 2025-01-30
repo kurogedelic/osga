@@ -171,8 +171,8 @@ class Kage:
             r = data[i]
             g = data[i+1]
             b = data[i+2]
-            # ハードウェアがBGR順を期待している場合の修正
-            rgb = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3)  # BGR順
+            # ハードウェアがRGB順を期待している場合の修正
+            rgb = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  # RGB順
             rgb565_data[i//3*2] = rgb >> 8
             rgb565_data[i//3*2+1] = rgb & 0xFF
         return rgb565_data
