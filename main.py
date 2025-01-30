@@ -16,18 +16,16 @@ def main():
         time.sleep(1)
 
         # 赤い四角形
-        kage.setColor(1)
-        kage.drawBox(10, 10, 50, 50)
+        kage.set_color(1)  # 修正: setColor → set_color
+        kage.fill_rect(10, 10, 50, 50)  # 修正: drawBox → fill_rect
+        kage.send_buffer()
         time.sleep(1)
 
         # 緑の四角形
-        kage.setColor(1)
-        kage.drawBox(70, 10, 50, 50)
+        kage.set_color(2)  # カラーパレット2番を緑に設定（後述の注意点参照）
+        kage.fill_rect(70, 10, 50, 50)
+        kage.send_buffer()
         time.sleep(1)
-
-        # 青の四角形
-        kage.setColor(1)
-        kage.drawBox(130, 10, 50, 50)
 
         print("Test completed. Press Ctrl+C to exit.")
         while True:
