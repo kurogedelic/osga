@@ -13,7 +13,7 @@ class KageLuaEngine:
 
     def setup_api(self):
         g = self.lua.globals()
-
+        g.print = print
         # Kage APIをテーブルとして提供
         kage_api = {
             'clear': self.kage.clear,
