@@ -33,7 +33,7 @@ class Kage:
             3: 24    # 大
         }
         try:
-            self.font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            self.font = ImageFont.truetype("/usr/share/fonts/opentype/inter/InterDisplay-Regular.otf",
                                            self.font_sizes[self.font_size])
         except:
             self.font = ImageFont.load_default()
