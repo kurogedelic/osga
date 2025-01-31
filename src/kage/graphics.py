@@ -10,7 +10,7 @@ class Kage:
         self.height = 240
 
         # メモリマップトI/Oの設定
-        self.fb = open('/dev/fb1', 'rb+')
+        self.fb = open('/dev/fb0', 'rb+')
         self.fb_size = self.width * self.height * 2  # 16bit color
         self.fb_map = mmap.mmap(
             self.fb.fileno(), self.fb_size, mmap.MAP_SHARED)
