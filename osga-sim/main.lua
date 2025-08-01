@@ -19,6 +19,8 @@ local currentApp = nil
 local isLoading = false
 local loadingDots = 0
 local loadingTimer = 0
+local pixelShader = nil
+local pixelScale = 2
 
 
 
@@ -130,13 +132,36 @@ function loadApp(appPath)
     return true
 end
 
+function createPixelShader()
+    local shader = [[
+        extern float pixelSize;
+        
+        vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
+        {
+            vec2 size = vec2(pixelSize) / love_ScreenSize.xy;
+            vec2 pixel = texture_coords - mod(texture_coords, size) + size * 0.5;
+            vec4 texcolor = Texel(texture, pixel);
+            
+            // Reduce color depth for bitmap effect
+            texcolor.r = floor(texcolor.r * 8.0 + 0.5) / 8.0;
+            texcolor.g = floor(texcolor.g * 8.0 + 0.5) / 8.0;
+            texcolor.b = floor(texcolor.b * 8.0 + 0.5) / 8.0;
+            
+            return texcolor * color;
+        }
+    ]]
+    return love.graphics.newShader(shader)
+end
+
 function love.load(args)
     love.graphics.setBackgroundColor(20 / 255, 20 / 255, 20 / 255)
     canvas = love.graphics.newCanvas(osga.system.width, osga.system.height)
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    
+    pixelShader = createPixelShader()
+    pixelShader:send("pixelSize", pixelScale)
 
     topbar.init()
-
 
     if args[1] then
         loadApp(args[1])
@@ -213,46 +238,32 @@ function love.update(dt)
     end
 end
 
-function love.draw()
-    if isLoading then
-        love.graphics.setCanvas(canvas)
-        love.graphics.clear()
-        love.graphics.setColor(1, 1, 1)
-
-
-        local scale = topbar.getScale()
-        local dots = string.rep(".", loadingDots)
-        love.graphics.print(
-            "Loading" .. dots,
-            osga.system.width / 2 - (30 * scale),
-            osga.system.height / 2,
-            0,
-            scale, scale
-        )
-        love.graphics.setCanvas()
-
-
-        love.graphics.push()
-        love.graphics.scale(scale, scale)
-        local yOffset = scale == 1 and 80 or 20
-        love.graphics.draw(canvas, 0, yOffset)
-        love.graphics.pop()
-        return
-    end
-
-
-    local scale = topbar.getScale()
-
-
-    topbar.draw()
-
-
-    love.graphics.setColor(1, 1, 1)
+function drawLoadingScreen()
     love.graphics.setCanvas(canvas)
     love.graphics.clear()
-    love.graphics.setFont(osga.font.getNada())
+    love.graphics.setColor(1, 1, 1)
+    
+    local scale = topbar.getScale()
+    local dots = string.rep(".", loadingDots)
+    love.graphics.print(
+        "Loading" .. dots,
+        osga.system.width / 2 - (30 * scale),
+        osga.system.height / 2,
+        0,
+        scale, scale
+    )
+    love.graphics.setCanvas()
+    
+    love.graphics.push()
+    love.graphics.scale(scale, scale)
+    local yOffset = scale == 1 and 80 or 20
+    love.graphics.setShader(pixelShader)
+    love.graphics.draw(canvas, 0, yOffset)
+    love.graphics.setShader()
+    love.graphics.pop()
+end
 
-
+function drawCurrentApp()
     if currentApp and currentApp.draw then
         local ok, err = pcall(currentApp.draw, koto)
         if not ok then
@@ -267,15 +278,35 @@ function love.draw()
             0, 100, osga.system.width, "center"
         )
     end
+end
 
+function love.draw()
+    if isLoading then
+        drawLoadingScreen()
+        return
+    end
 
+    local scale = topbar.getScale()
+    
+    topbar.draw()
+    
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.setCanvas(canvas)
+    love.graphics.clear()
+    love.graphics.setFont(osga.font.getNada())
+    
+    drawCurrentApp()
+    
     love.graphics.setCanvas()
+    
     love.graphics.push()
     love.graphics.scale(scale, scale)
-
+    
     local yOffset = scale == 1 and 80 or 20
+    love.graphics.setShader(pixelShader)
     love.graphics.draw(canvas, 0, yOffset)
-
+    love.graphics.setShader()
+    
     love.graphics.pop()
     love.graphics.setFont(osga.font.getNada())
 end
@@ -291,6 +322,10 @@ function love.keypressed(key)
         koto.swR = true
     elseif key == 'escape' then
         koto.button.back = true
+    elseif key == 'p' then
+        -- Toggle pixel effect
+        pixelScale = pixelScale == 2 and 4 or 2
+        pixelShader:send("pixelSize", pixelScale)
     end
 end
 

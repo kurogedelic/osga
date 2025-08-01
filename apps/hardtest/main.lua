@@ -12,25 +12,32 @@ app._meta = {
     name = "Hardware Test",
     slug = "hardtest",
     author = "Leo Kuroshita",
-    author_url = "https://hoge.com/",
-    app_url = "https://github.com/hoge/hardtest/",
     version = "1.0.0"
 }
 
 
+
+
+
+-- State variables
 local rotaryZ = 0
 local sounds = {
     a = nil,
     b = nil,
     c = nil
 }
+local soundChannels = {
+    a = nil,
+    b = nil,
+    c = nil
+}
 local recentRotaryTicks = 0
 local fillMode = false
+local prevSwR = false
 
-
+-- 3D cube vertices and faces definition
 local faces = {
-
-
+    -- Each face defined by vertex indices and a normal vector
     { vertices = { 1, 2, 3, 4 }, normal = { 0, 0, 1 } },
     { vertices = { 5, 6, 7, 8 }, normal = { 0, 0, -1 } },
     { vertices = { 1, 2, 6, 5 }, normal = { 0, -1, 0 } },
@@ -39,18 +46,22 @@ local faces = {
     { vertices = { 2, 3, 7, 6 }, normal = { 1, 0, 0 } }
 }
 
-
+-- 3D transformation functions
 local function rotatePoint(point, angleX, angleY, angleZ)
     local cos, sin = math.cos, math.sin
     local x, y, z = point[1], point[2], point[3]
 
+    -- Rotate around X axis
     y, z = y * cos(angleX) - z * sin(angleX), y * sin(angleX) + z * cos(angleX)
+    -- Rotate around Y axis
     x, z = x * cos(angleY) + z * sin(angleY), -x * sin(angleY) + z * cos(angleY)
+    -- Rotate around Z axis
     x, y = x * cos(angleZ) - y * sin(angleZ), x * sin(angleZ) + y * cos(angleZ)
 
     return { x, y, z }
 end
 
+-- Project 3D point to 2D screen coordinates
 local function project(point, width, height)
     local scale = 50
     local x = point[1] * scale + width / 2
@@ -58,6 +69,7 @@ local function project(point, width, height)
     return { x, y }
 end
 
+-- Calculate face normal after rotation
 local function calculateNormal(face, rotatedVertices)
     local v1 = rotatedVertices[face.vertices[1]]
     local v2 = rotatedVertices[face.vertices[2]]
@@ -79,17 +91,36 @@ local function calculateNormal(face, rotatedVertices)
 end
 
 function app.init()
-    print("App initialized")
+    print("Hardware Test app initialized")
 
+    -- Create sound sources for each button
+    sounds.a = osga.sound.synth.newOscillator('square', 261.63)   -- C4
+    sounds.b = osga.sound.synth.newOscillator('square', 329.63)   -- E4
+    sounds.c = osga.sound.synth.newOscillator('sawtooth', 392.00) -- G4
 
-    sounds.a = osga.sound.synth.newSquare('C4')
-    sounds.b = osga.sound.synth.newSquare('E4')
-    sounds.c = osga.sound.synth.newSawtooth('G4')
+    -- Create channels for the sounds
+    soundChannels.a = osga.sound.channel.new()
+    soundChannels.b = osga.sound.channel.new()
+    soundChannels.c = osga.sound.channel.new()
 
+    -- Add sources to channels
+    soundChannels.a:addSource(sounds.a)
+    soundChannels.b:addSource(sounds.b)
+    soundChannels.c:addSource(sounds.c)
 
-    osga.sound.filter.presets.muffled(sounds.a)
-    osga.sound.filter.presets.tinny(sounds.b)
-    osga.sound.filter.presets.telephone(sounds.c)
+    -- Add filters to make the sounds more interesting
+    local filterA = osga.sound.filter.new('lowpass', { frequency = 500, q = 1.0 })
+    local filterB = osga.sound.filter.new('bandpass', { frequency = 800, q = 2.0 })
+    local filterC = osga.sound.filter.new('highpass', { frequency = 300, q = 1.5 })
+
+    soundChannels.a:addEffect(filterA)
+    soundChannels.b:addEffect(filterB)
+    soundChannels.c:addEffect(filterC)
+
+    -- Register channels with the sound system
+    osga.sound.addChannel(soundChannels.a)
+    osga.sound.addChannel(soundChannels.b)
+    osga.sound.addChannel(soundChannels.c)
 
     print("Sounds initialized")
 end
@@ -98,7 +129,7 @@ function app.draw(koto)
     osga.gfx.clear(0, 0, 0)
     osga.gfx.color(1, 1, 1)
 
-
+    -- Check for rotary button press to toggle fill mode
     if koto.swR and not prevSwR then
         fillMode = not fillMode
     end
@@ -107,50 +138,62 @@ function app.draw(koto)
     local width = osga.system.width
     local height = osga.system.height
 
-
+    -- Calculate rotation angle from rotary encoder value
     rotaryZ = (koto.rotaryValue / 180 - 1) * math.pi
 
-
+    -- Get rotation angles from gyro input
     local angleX = koto.gyroY * math.pi / 2
     local angleY = koto.gyroX * math.pi / 2
     local angleZ = rotaryZ
 
-
+    -- Define cube vertices
     local vertices = {
         { -1, -1, 1 }, { 1, -1, 1 }, { 1, 1, 1 }, { -1, 1, 1 },
         { -1, -1, -1 }, { 1, -1, -1 }, { 1, 1, -1 }, { -1, 1, -1 }
     }
 
-
+    -- Rotate all vertices
     local rotatedVertices = {}
     for _, vertex in ipairs(vertices) do
         table.insert(rotatedVertices, rotatePoint(vertex, angleX, angleY, angleZ))
     end
 
-
+    -- Set base color, change when buttons are pressed
     local baseColor = { 1, 1, 1 }
+
+    -- Handle button A (red)
     if koto.swA then
         baseColor = { 1, 0, 0 }
-        if not osga.sound.isSourcePlaying(sounds.a) then
-            osga.sound.playSource(sounds.a)
-        end
-    elseif koto.swB then
-        baseColor = { 0, 1, 0 }
-        if not osga.sound.isSourcePlaying(sounds.b) then
-            osga.sound.playSource(sounds.b)
-        end
-    elseif koto.swC then
-        baseColor = { 0, 0, 1 }
-        if not osga.sound.isSourcePlaying(sounds.c) then
-            osga.sound.playSource(sounds.c)
+        if not soundChannels.a:isPlaying() then
+            soundChannels.a:play()
         end
     else
-        osga.sound.stopSource(sounds.a)
-        osga.sound.stopSource(sounds.b)
-        osga.sound.stopSource(sounds.c)
+        soundChannels.a:stop()
     end
 
+    -- Handle button B (green)
+    if koto.swB then
+        baseColor = { 0, 1, 0 }
+        if not soundChannels.b:isPlaying() then
+            soundChannels.b:play()
+        end
+    else
+        soundChannels.b:stop()
+    end
+
+    -- Handle button C (blue)
+    if koto.swC then
+        baseColor = { 0, 0, 1 }
+        if not soundChannels.c:isPlaying() then
+            soundChannels.c:play()
+        end
+    else
+        soundChannels.c:stop()
+    end
+
+    -- Draw the cube
     if fillMode then
+        -- Sort faces by depth for correct rendering
         local facesWithDepth = {}
         for i, face in ipairs(faces) do
             local centerZ = 0
@@ -162,10 +205,11 @@ function app.draw(koto)
         end
         table.sort(facesWithDepth, function(a, b) return a.depth < b.depth end)
 
-
+        -- Draw filled faces
         for _, faceData in ipairs(facesWithDepth) do
             local face = faceData.face
             local normal = calculateNormal(face, rotatedVertices)
+            -- Basic lighting calculation
             local lightIntensity = math.abs(normal[3]) * 0.8 + 0.2
 
             osga.gfx.color(
@@ -183,6 +227,7 @@ function app.draw(koto)
             osga.gfx.polygon(points, "fill")
         end
     else
+        -- Draw wireframe cube
         osga.gfx.color(baseColor)
         local edges = {
             { 1, 2 }, { 2, 3 }, { 3, 4 }, { 4, 1 },
@@ -198,14 +243,14 @@ function app.draw(koto)
         end
     end
 
-
+    -- Display debug information
     osga.gfx.color(1, 1, 1)
     osga.gfx.text(string.format("gyroX = %.1f", koto.gyroX), 10, 10)
     osga.gfx.text(string.format("gyroY = %.1f", koto.gyroY), 10, 30)
     osga.gfx.text(string.format("rotary = %.1f", rotaryZ), 10, 50)
-    osga.gfx.text("mode = " .. (fillMode and "fill" or "wire"), 10, 70)
+    osga.gfx.text("mode = " .. (fillMode and "fill" or "wireframe"), 10, 70)
 
-
+    -- Show which buttons are pressed
     if koto.swA then osga.gfx.text("A button", 10, 120) end
     if koto.swB then osga.gfx.text("B button", 10, 140) end
     if koto.swC then osga.gfx.text("C button", 10, 160) end
@@ -213,11 +258,23 @@ function app.draw(koto)
 end
 
 function app.cleanup()
-    for _, sound in pairs(sounds) do
-        if sound then
-            osga.sound.stopSource(sound)
-        end
+    -- Stop all sounds and remove channels
+    if soundChannels.a then
+        soundChannels.a:stop()
+        osga.sound.removeChannel(soundChannels.a)
     end
+
+    if soundChannels.b then
+        soundChannels.b:stop()
+        osga.sound.removeChannel(soundChannels.b)
+    end
+
+    if soundChannels.c then
+        soundChannels.c:stop()
+        osga.sound.removeChannel(soundChannels.c)
+    end
+
+    print("Hardware Test app cleaned up")
 end
 
 return app
