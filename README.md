@@ -1,6 +1,6 @@
-# OSGA - Operating System for Generative Art
+# OSGA - Open Sound & Graphics Appliance
 
-A Love2D-based creative coding environment designed for OpenOSGA hardware, featuring a 320x240 pixel display and physical controls.
+A Love2D-based creative coding environment designed for osga-shield hardware, featuring a 320x240 pixel display and physical controls.
 
 ![OSGA](https://img.shields.io/badge/OSGA-v1.0.0-blue.svg)
 ![Love2D](https://img.shields.io/badge/Love2D-11.4-ff69b4.svg)
@@ -8,7 +8,9 @@ A Love2D-based creative coding environment designed for OpenOSGA hardware, featu
 
 ## Overview
 
-OSGA (Operating System for Generative Art) is a platform for creating and running interactive audio-visual applications on constrained hardware. It provides a simple API for graphics, sound synthesis, and hardware input handling.
+OSGA (Open Sound & Graphics Appliance) is a platform for creating and running interactive audio-visual applications on constrained hardware. It provides a simple API for graphics, sound synthesis, and hardware input handling.
+
+**Hardware:** [osga-shield](https://github.com/kurogedelic/osga-shield) - An open hardware platform for creative coding
 
 ## Features
 
@@ -238,7 +240,7 @@ return app
 - [ ] Documentation generator
 
 ### Hardware Support
-- [ ] Serial communication with OpenOSGA devices
+- [ ] Serial communication with osga-shield devices
 - [ ] Firmware update mechanism
 - [ ] Battery status API
 - [ ] LED control API
@@ -289,4 +291,4 @@ See the [LICENSE](LICENSE) file for the full license text.
 **Special Thanks:**
 - Built with [Love2D](https://love2d.org/)
 - Inspired by fantasy consoles like PICO-8 and TIC-80
-- Designed for the OpenOSGA hardware platform
+- Designed for the [osga-shield](https://github.com/kurogedelic/osga-shield) hardware platform
