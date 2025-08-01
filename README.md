@@ -27,6 +27,34 @@ OSGA (Open Sound & Graphics Appliance) is a platform for creating and running in
 - [Love2D](https://love2d.org/) version 11.4 or higher
 - Git for cloning the repository
 
+### Installing Love2D
+
+#### macOS
+```bash
+# Using Homebrew
+brew install love
+
+# Or download from https://love2d.org/
+```
+
+#### Ubuntu/Debian
+```bash
+sudo apt-get update
+sudo apt-get install love2d
+```
+
+#### Windows
+Download the installer from [love2d.org](https://love2d.org/) or use:
+```bash
+# Using Chocolatey
+choco install love2d
+```
+
+#### Arch Linux
+```bash
+sudo pacman -S love
+```
+
 ### Installation
 
 ```bash
