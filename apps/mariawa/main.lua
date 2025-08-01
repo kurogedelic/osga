@@ -27,8 +27,8 @@ local field = {
 
 local colors = {
     background = { 0, 0, 0 },
-    field = { 0.15, 0.15, 0.17 },
-    circle = { 0.75, 0.75, 0.75 },
+    field = { 0, 0, 0 },
+    circle = { 10, 10, 10 },
     highlight = { 1, 1, 1 },
     shadow = { 0.2, 0.2, 0.22 },
     text = { 1, 1, 1 },
@@ -92,14 +92,6 @@ function Circle:draw()
 
     osga.gfx.color(unpack(colors.circle))
     osga.gfx.circle(self.x, self.y, self.radius)
-
-
-    local highlightRadius = self.radius * 0.3
-    local highlightOffsetX = -self.radius * 0.3
-    local highlightOffsetY = -self.radius * 0.3
-
-    osga.gfx.color(colors.highlight[1], colors.highlight[2], colors.highlight[3], 0.7)
-    osga.gfx.circle(self.x + highlightOffsetX, self.y + highlightOffsetY, highlightRadius)
 end
 
 function Circle:playTone()
