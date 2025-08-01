@@ -30,7 +30,7 @@ OSGA (Open Sound & Graphics Appliance) is a platform for creating and running in
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/osga.git
+git clone https://github.com/kurogedelic/osga.git
 cd osga
 ```
 
