@@ -1,8 +1,17 @@
 -- api/sound/synth.lua
-local denver = require('api.libs.denver')
+-- Sound synthesis module for OSGA
+-- Oscillator implementations inspired by denver.lua
 local Source = require('api.sound.source')
 
 local synth = {}
+
+-- Audio settings
+local SAMPLE_RATE = 44100
+local BITS = 16
+local CHANNELS = 1
+
+-- Note to frequency conversion (A4 = 440Hz)
+local BASE_FREQ = 440
 
 
 function synth.newNoise(type, params)
@@ -38,9 +47,37 @@ function synth.newNoise(type, params)
     end)
 end
 
+-- Convert note string to frequency (e.g. "A4" -> 440, "C#5" -> 554.37)
+function synth.noteToFrequency(note_str)
+    if not note_str or type(note_str) ~= 'string' then
+        return nil
+    end
+    
+    local note_semitones = { C = -9, D = -7, E = -5, F = -4, G = -2, A = 0, B = 2 }
+    
+    local semitones = note_semitones[note_str:sub(1, 1)]
+    if not semitones then return nil end
+    
+    local octave = 4
+    
+    if note_str:len() == 2 then
+        octave = tonumber(note_str:sub(2, 2)) or 4
+    elseif note_str:len() == 3 then
+        if note_str:sub(2, 2) == '#' then
+            semitones = semitones + 1
+        elseif note_str:sub(2, 2) == 'b' then
+            semitones = semitones - 1
+        end
+        octave = tonumber(note_str:sub(3, 3)) or 4
+    end
+    
+    semitones = semitones + 12 * (octave - 4)
+    return BASE_FREQ * math.pow(2, semitones / 12)
+end
+
 local function sineOscillator(frequency)
     local phase = 0
-    local phaseIncrement = 2 * math.pi * frequency / 44100
+    local phaseIncrement = 2 * math.pi * frequency / SAMPLE_RATE
 
     return function()
         phase = phase + phaseIncrement
@@ -53,7 +90,7 @@ end
 
 local function sawtoothOscillator(frequency)
     local phase = 0
-    local phaseIncrement = frequency / 44100
+    local phaseIncrement = frequency / SAMPLE_RATE
 
     return function()
         phase = phase + phaseIncrement
@@ -66,7 +103,7 @@ end
 
 local function triangleOscillator(frequency)
     local phase = 0
-    local phaseIncrement = frequency / 44100
+    local phaseIncrement = frequency / SAMPLE_RATE
 
     return function()
         phase = phase + phaseIncrement
@@ -82,7 +119,7 @@ end
 local function squareOscillator(frequency, pulseWidth)
     pulseWidth = pulseWidth or 0.5
     local phase = 0
-    local phaseIncrement = frequency / 44100
+    local phaseIncrement = frequency / SAMPLE_RATE
 
     return function()
         phase = phase + phaseIncrement
@@ -96,6 +133,11 @@ end
 
 function synth.newOscillator(waveform, frequency)
     local generator
+    
+    -- Handle note strings (e.g., "A4", "C#5")
+    if type(frequency) == 'string' then
+        frequency = synth.noteToFrequency(frequency)
+    end
     frequency = frequency or 440
 
     print("Creating oscillator:", waveform, frequency)

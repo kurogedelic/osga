@@ -310,7 +310,7 @@ See the [LICENSE](LICENSE) file for the full license text.
 
 **Credits:**
 - **NADA font** by Leo Kuroshita
-- **Sound generation** based on denver.lua by SuperZazu with extensions  
+- **Sound synthesis** inspired by denver.lua by SuperZazu  
   https://github.com/superzazu/denver.lua (MIT License)
 - **Additional libraries:**
   - sone.lua by camchenry (MIT License)
