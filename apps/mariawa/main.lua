@@ -28,11 +28,25 @@ local field = {
 local colors = {
     background = { 0, 0, 0 },
     field = { 0, 0, 0 },
-    circle = { 10, 10, 10 },
+    circle = { 10, 10, 10 },  -- Not used anymore, each ball has its own color
     highlight = { 1, 1, 1 },
     shadow = { 0.2, 0.2, 0.22 },
     text = { 1, 1, 1 },
     selected = { 0.9, 0.9, 0.3 }
+}
+
+-- Colorful palette for balls
+local ballColors = {
+    { 1.0, 0.4, 0.4 },    -- Red
+    { 0.4, 1.0, 0.4 },    -- Green
+    { 0.4, 0.4, 1.0 },    -- Blue
+    { 1.0, 1.0, 0.4 },    -- Yellow
+    { 1.0, 0.4, 1.0 },    -- Magenta
+    { 0.4, 1.0, 1.0 },    -- Cyan
+    { 1.0, 0.6, 0.2 },    -- Orange
+    { 0.8, 0.4, 1.0 },    -- Purple
+    { 0.2, 0.8, 0.6 },    -- Teal
+    { 1.0, 0.8, 0.6 }     -- Peach
 }
 
 
@@ -65,6 +79,8 @@ function Circle:new(x, y, radius)
     circle.vy = 0
     circle.radius = radius
     circle.lastCollisionTime = 0
+    -- Assign a random color from the palette
+    circle.color = ballColors[math.random(1, #ballColors)]
     return circle
 end
 
@@ -85,13 +101,13 @@ function Circle:draw()
     local shadowOffsetX = self.radius * 0.3
     local shadowOffsetY = self.radius * 0.3
 
-
+    -- Shadow
     osga.gfx.color(colors.shadow[1], colors.shadow[2], colors.shadow[3], 0.5)
-    osga.gfx.circle(self.x + shadowOffsetX, self.y + shadowOffsetY, self.radius)
+    osga.gfx.circle(self.x + shadowOffsetX, self.y + shadowOffsetY, self.radius, "fill")
 
-
-    osga.gfx.color(unpack(colors.circle))
-    osga.gfx.circle(self.x, self.y, self.radius)
+    -- Use the circle's individual color
+    osga.gfx.color(self.color[1], self.color[2], self.color[3])
+    osga.gfx.circle(self.x, self.y, self.radius, "fill")
 end
 
 function Circle:playTone()
@@ -156,28 +172,31 @@ end
 function app.draw(koto)
     osga.gfx.clear(unpack(colors.background))
 
-
+    -- Draw field background
     osga.gfx.color(unpack(colors.field))
     osga.gfx.rect(field.x, field.y, field.width, field.height, "fill")
 
-
+    -- Draw field border
     osga.gfx.color(unpack(colors.text))
     osga.gfx.rect(field.x, field.y, field.width, field.height, "line")
 
-
-    drawParameters()
-
-
+    -- Update sounds
     updateSounds()
 
-
+    -- Draw circles
     for _, circle in ipairs(circles) do
         circle:update(koto.gyroX * gravity * 0.5, koto.gyroY * gravity * 0.5)
         circle:draw()
     end
 
-
+    -- Check collisions
     checkCollision()
+    
+    -- Draw parameters (this sets colors internally)
+    drawParameters()
+    
+    -- Reset color to default white
+    osga.gfx.color(1, 1, 1, 1)
 
 
     if koto.swA and lastSwA ~= koto.swA then
