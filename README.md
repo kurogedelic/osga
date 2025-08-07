@@ -64,6 +64,24 @@ cd osga
 
 ### Running the Simulator
 
+#### Quick Start (Using Launch Scripts)
+
+```bash
+# macOS
+./run_mac.sh              # Launch with default app (Kumo)
+./run_mac.sh mariawa      # Launch specific app
+
+# Linux
+./run_linux.sh            # Launch with default app
+./run_linux.sh mariawa    # Launch specific app
+
+# Windows
+run_windows.bat           # Launch with default app
+run_windows.bat mariawa   # Launch specific app
+```
+
+#### Manual Launch
+
 ```bash
 # Run the simulator with default app (Kumo launcher)
 love osga-sim
@@ -71,6 +89,11 @@ love osga-sim
 # Run a specific app directly
 love osga-sim apps/mariawa
 ```
+
+#### Running on Raspberry Pi (osga-shield)
+
+For running OSGA on actual hardware (Raspberry Pi with osga-shield), please refer to:
+→ [osga-shield installation guide](https://github.com/kurogedelic/osga-shield#getting-started)
 
 ### Controls
 
