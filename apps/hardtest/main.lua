@@ -11,7 +11,7 @@ local app = {}
 app._meta = {
     name = "Hardware Test",
     slug = "hardtest",
-    author = "Leo Kuroshita",
+    author = "kurogedelic",
     version = "1.0.0"
 }
 

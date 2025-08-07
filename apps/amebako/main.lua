@@ -3,7 +3,7 @@ local app = {}
 app._meta = {
     name = "Amebako",
     slug = "amebako",
-    author = "Leo Kuroshita",
+    author = "kurogedelic",
     version = "1.0.0"
 }
 

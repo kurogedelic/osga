@@ -4,9 +4,9 @@ local app = {}
 app._meta = {
     name = "Ambient Meter",
     slug = "ambient",
-    author = "OSGA Developer",
-    author_url = "https://example.com/",
-    app_url = "https://github.com/example/ambientmeter/",
+    author = "kurogedelic",
+    author_url = "https://github.com/kurogedelic",
+    app_url = "https://github.com/kurogedelic/osga",
     version = "1.0.0"
 }
 

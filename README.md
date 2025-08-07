@@ -306,7 +306,7 @@ See the [LICENSE](LICENSE) file for the full license text.
 
 ## Acknowledgments
 
-**OSGA** by Leo Kuroshita from Hugelton Instruments (2025)
+**OSGA** by kurogedelic (2025)
 
 **Credits:**
 - **NADA font** by Leo Kuroshita

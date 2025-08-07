@@ -4,9 +4,9 @@ local app = {}
 app._meta = {
     name = "Mariawa",
     slug = "mariawa",
-    author = "Leo Kuroshita",
-    author_url = "https://hoge.com/",
-    app_url = "https://github.com/hoge/hardtest/",
+    author = "kurogedelic",
+    author_url = "https://github.com/kurogedelic",
+    app_url = "https://github.com/kurogedelic/osga",
     version = "1.0.0"
 }
 
