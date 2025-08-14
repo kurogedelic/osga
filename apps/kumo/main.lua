@@ -35,6 +35,15 @@ local startY = 34
 -- Icon sizes cache
 local iconSizes = {}
 
+-- Touch handling
+local touchData = {
+    startX = 0,
+    startY = 0,
+    startScroll = 0,
+    isDragging = false,
+    tapTime = 0
+}
+
 -- デバッグ用変数
 local debug = {
     selectedRow = 0,
@@ -442,6 +451,66 @@ function app.cleanup()
     installedApps = {}
     -- iconSizesはキャッシュとして保持
     print("Kumo app cleaned up")
+end
+
+-- Touch support functions
+function app.touchpressed(id, x, y, dx, dy, pressure)
+    touchData.startX = x
+    touchData.startY = y
+    touchData.startScroll = scrollPosition
+    touchData.isDragging = false
+    touchData.tapTime = love.timer.getTime()
+end
+
+function app.touchmoved(id, x, y, dx, dy, pressure)
+    if touchData.startY then
+        local deltaY = y - touchData.startY
+        
+        -- Start dragging if moved enough
+        if math.abs(deltaY) > 5 then
+            touchData.isDragging = true
+        end
+        
+        -- Update scroll position while dragging
+        if touchData.isDragging then
+            local newScroll = touchData.startScroll - deltaY
+            local maxScroll = getMaxScrollPosition()
+            scrollPosition = math.max(0, math.min(newScroll, maxScroll))
+            targetScrollPosition = scrollPosition
+        end
+    end
+end
+
+function app.touchreleased(id, x, y, dx, dy, pressure)
+    local tapDuration = love.timer.getTime() - touchData.tapTime
+    
+    -- Check if it's a tap (not a drag and quick)
+    if not touchData.isDragging and tapDuration < 0.3 then
+        -- Check which app was tapped
+        for i, appData in ipairs(installedApps) do
+            local row = math.floor((i - 1) / GRID_COLS)
+            local col = (i - 1) % GRID_COLS
+            local iconX = startX + col * (ICON_SIZE + 8)
+            local iconY = startY + (row * ROW_HEIGHT) - scrollPosition
+            
+            -- Check if tap is within icon bounds
+            if x >= iconX and x <= iconX + ICON_SIZE and
+               y >= iconY and y <= iconY + ICON_SIZE + 20 then
+                selectedIndex = i
+                -- Launch the app
+                selectedApp = installedApps[selectedIndex]
+                if selectedApp then
+                    loadApp(selectedApp.path)
+                end
+                break
+            end
+        end
+    end
+    
+    -- Reset touch data
+    touchData.startX = 0
+    touchData.startY = 0
+    touchData.isDragging = false
 end
 
 return app

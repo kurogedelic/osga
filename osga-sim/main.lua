@@ -361,13 +361,47 @@ function love.wheelmoved(x, y)
     end
 end
 
-function love.mousemoved(x, y)
-    topbar.mousemoved(x, y)
-end
-
 function love.mousepressed(x, y, button)
     if y < 80 then
         topbar.mousepressed(x, y, button)
+    else
+        -- Simulate touch for mouse clicks (for testing on desktop)
+        if currentApp and currentApp.touchpressed then
+            currentApp.touchpressed(1, x, y - 80, 0, 0, 1)
+        end
+    end
+end
+
+function love.mousereleased(x, y, button)
+    if currentApp and currentApp.touchreleased then
+        currentApp.touchreleased(1, x, y - 80, 0, 0, 0)
+    end
+end
+
+function love.mousemoved(x, y, dx, dy)
+    topbar.mousemoved(x, y)
+    -- Simulate touch move if mouse is pressed
+    if love.mouse.isDown(1) and currentApp and currentApp.touchmoved then
+        currentApp.touchmoved(1, x, y - 80, dx, dy, 1)
+    end
+end
+
+-- Native touch support
+function love.touchpressed(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchpressed then
+        currentApp.touchpressed(id, x, y - 80, dx, dy, pressure)
+    end
+end
+
+function love.touchmoved(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchmoved then
+        currentApp.touchmoved(id, x, y - 80, dx, dy, pressure)
+    end
+end
+
+function love.touchreleased(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchreleased then
+        currentApp.touchreleased(id, x, y - 80, dx, dy, pressure)
     end
 end
 
