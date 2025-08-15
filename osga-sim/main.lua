@@ -22,6 +22,10 @@ local loadingTimer = 0
 local pixelShader = nil
 local pixelScale = 2
 
+-- TouchOSC support
+local touchOSC = nil
+local touchOSCEnabled = false
+
 
 
 koto = {
@@ -178,6 +182,19 @@ function love.load(args)
     
     -- Allow manual cursor toggle with 'c' key
     
+    -- Initialize TouchOSC bridge
+    local touchOSCBridge = require("api.touchosc.bridge")
+    touchOSC = touchOSCBridge.new(8000)
+    
+    -- Try to start TouchOSC server
+    if touchOSC:start() then
+        touchOSC:mapToKoto(koto)
+        touchOSCEnabled = true
+        print("TouchOSC integration enabled")
+    else
+        print("TouchOSC integration not available (LuaSocket required)")
+    end
+    
     topbar.init()
 
     if args[1] then
@@ -198,6 +215,11 @@ function love.update(dt)
         end
     end
     osga.sound.update()
+    
+    -- Update TouchOSC
+    if touchOSCEnabled and touchOSC then
+        touchOSC:update()
+    end
 
     local mx, my = love.mouse.getPosition()
     local scale = topbar.getScale()
@@ -348,6 +370,13 @@ function love.keypressed(key)
         local visible = love.mouse.isVisible()
         love.mouse.setVisible(not visible)
         print("Cursor", not visible and "shown" or "hidden")
+    elseif key == 'o' then
+        -- Toggle TouchOSC debug
+        if touchOSC then
+            local debug = not touchOSC.debug
+            touchOSC:setDebug(debug)
+            print("TouchOSC debug", debug and "enabled" or "disabled")
+        end
     end
 end
 
