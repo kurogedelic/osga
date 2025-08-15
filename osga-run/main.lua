@@ -19,7 +19,41 @@ local loadingTimer = 0
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 print("Window size: " .. width .. "x" .. height)
-love.mouse.setVisible(false)
+
+-- Auto-detect environment and hide cursor if appropriate
+local cursorHidden = false
+local os = love.system.getOS()
+
+if os == "Linux" then
+    -- Check if running on Raspberry Pi
+    local handle = io.popen("cat /proc/device-tree/model 2>/dev/null")
+    if handle then
+        local result = handle:read("*a")
+        handle:close()
+        if result and result:find("Raspberry Pi") then
+            love.mouse.setVisible(false)
+            cursorHidden = true
+            print("OSGA: Raspberry Pi detected - cursor hidden")
+        end
+    end
+    
+    -- Check for touchscreen
+    if not cursorHidden then
+        local touchHandle = io.popen("ls /dev/input/touchscreen* 2>/dev/null")
+        if touchHandle then
+            local touchResult = touchHandle:read("*a")
+            touchHandle:close()
+            if touchResult and touchResult ~= "" then
+                love.mouse.setVisible(false)
+                cursorHidden = true
+                print("OSGA: Touchscreen detected - cursor hidden")
+            end
+        end
+    end
+else
+    -- For non-Linux systems, default to showing cursor
+    love.mouse.setVisible(true)
+end
 
 koto = {
     swA = false,
@@ -304,6 +338,44 @@ function love.wheelmoved(x, y)
         rotaryState.ticks = rotaryState.ticks + 1
     elseif y < 0 then
         rotaryState.ticks = rotaryState.ticks - 1
+    end
+end
+
+-- Touch support for production runtime
+function love.touchpressed(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchpressed then
+        currentApp.touchpressed(id, x, y, dx, dy, pressure)
+    end
+end
+
+function love.touchmoved(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchmoved then
+        currentApp.touchmoved(id, x, y, dx, dy, pressure)
+    end
+end
+
+function love.touchreleased(id, x, y, dx, dy, pressure)
+    if currentApp and currentApp.touchreleased then
+        currentApp.touchreleased(id, x, y, dx, dy, pressure)
+    end
+end
+
+-- Mouse emulation for touch (if cursor is hidden)
+function love.mousepressed(x, y, button)
+    if not love.mouse.isVisible() and currentApp and currentApp.touchpressed then
+        currentApp.touchpressed(1, x, y, 0, 0, 1)
+    end
+end
+
+function love.mousereleased(x, y, button)
+    if not love.mouse.isVisible() and currentApp and currentApp.touchreleased then
+        currentApp.touchreleased(1, x, y, 0, 0, 0)
+    end
+end
+
+function love.mousemoved(x, y, dx, dy)
+    if not love.mouse.isVisible() and love.mouse.isDown(1) and currentApp and currentApp.touchmoved then
+        currentApp.touchmoved(1, x, y, dx, dy, 1)
     end
 end
 

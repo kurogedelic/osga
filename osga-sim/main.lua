@@ -161,6 +161,23 @@ function love.load(args)
     pixelShader = createPixelShader()
     pixelShader:send("pixelSize", pixelScale)
 
+    -- Hide cursor on Raspberry Pi or touchscreen environments
+    local os = love.system.getOS()
+    if os == "Linux" then
+        -- Check if running on Raspberry Pi
+        local handle = io.popen("cat /proc/device-tree/model 2>/dev/null")
+        if handle then
+            local result = handle:read("*a")
+            handle:close()
+            if result and result:find("Raspberry Pi") then
+                love.mouse.setVisible(false)
+                print("Running on Raspberry Pi - cursor hidden")
+            end
+        end
+    end
+    
+    -- Allow manual cursor toggle with 'c' key
+    
     topbar.init()
 
     if args[1] then
@@ -326,6 +343,11 @@ function love.keypressed(key)
         -- Toggle pixel effect
         pixelScale = pixelScale == 2 and 4 or 2
         pixelShader:send("pixelSize", pixelScale)
+    elseif key == 'c' then
+        -- Toggle cursor visibility
+        local visible = love.mouse.isVisible()
+        love.mouse.setVisible(not visible)
+        print("Cursor", not visible and "shown" or "hidden")
     end
 end
 
