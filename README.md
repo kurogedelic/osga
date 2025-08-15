@@ -103,6 +103,9 @@ For running OSGA on actual hardware (Raspberry Pi with osga-shield), please refe
 - **Mouse Movement**: Gyroscope simulation (when enabled)
 - **ESC**: Back button
 - **P**: Toggle pixel effect (2x/4x pixelation)
+- **C**: Toggle cursor visibility
+- **O**: Toggle TouchOSC debug mode
+- **F12**: Toggle performance debug overlay (runtime only)
 
 ## Project Structure
 

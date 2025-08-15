@@ -1,20 +1,41 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
+# OSGA Project .gitignore
 
-# Project specific
-sublications/current/*
-!sublications/current/.gitkeep
-sublications/archive/*
-!sublications/archive/.gitkeep
-sublications/uploaded/*
-!sublications/uploaded/.gitkeep
+# Love2D temporary files
+*.love
 
-# OS
+# System files
 .DS_Store
-*.log
+Thumbs.db
+*.tmp
+*.temp
 
-# vscode
-.vscode
+# Debug and log files
+*.log
+debug_*.log
+osga_debug_*.log
+/tmp/osga_*
+
+# Runtime configuration
+local_config.lua
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Platform specific builds
+build/
+dist/
+
+# Backup files
+*.backup
+*.bak
+main.lua.original
+*.lua.backup
+
+# Test files
+test_*.lua
+temp_*.lua
