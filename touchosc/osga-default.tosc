@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="2" mode="0" orientation="vertical">
+    <tabpage name="Main" scalef="1.0" scalet="1.0">
+        
+        <!-- Title Label -->
+        <label name="title" x="20" y="20" w="280" h="40" 
+               color="white" size="24" text="OSGA Controller"/>
+        
+        <!-- Button Row for A, B, C, R -->
+        <group name="buttons" x="20" y="80" w="280" h="60">
+            <push name="push1" x="0" y="0" w="60" h="60"
+                  color="red" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="A" size="20" color="white"/>
+                <osc>/1/push1</osc>
+            </push>
+            
+            <push name="push2" x="75" y="0" w="60" h="60"
+                  color="green" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="B" size="20" color="white"/>
+                <osc>/1/push2</osc>
+            </push>
+            
+            <push name="push3" x="150" y="0" w="60" h="60"
+                  color="blue" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="C" size="20" color="white"/>
+                <osc>/1/push3</osc>
+            </push>
+            
+            <push name="push4" x="225" y="0" w="60" h="60"
+                  color="yellow" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="R" size="20" color="white"/>
+                <osc>/1/push4</osc>
+            </push>
+        </group>
+        
+        <!-- XY Pad for Gyro Simulation -->
+        <xy name="xy1" x="20" y="160" w="200" h="200"
+            color="orange" scalef="0.0" scalet="1.0">
+            <label text="Gyro X/Y" size="14" color="white"/>
+            <osc>/1/xy1</osc>
+        </xy>
+        
+        <!-- Rotary Control -->
+        <rotary name="rotary1" x="240" y="180" w="60" h="60"
+                color="purple" scalef="0.0" scalet="1.0">
+            <label text="Rotary" size="12" color="white"/>
+            <osc>/1/rotary1</osc>
+        </rotary>
+        
+        <!-- Fader for Z axis -->
+        <fader name="fader1" x="240" y="260" w="60" h="100"
+               color="cyan" scalef="0.0" scalet="1.0" inverted="false">
+            <label text="Z" size="12" color="white"/>
+            <osc>/1/fader1</osc>
+        </fader>
+        
+        <!-- Toggle Switches Row -->
+        <group name="toggles" x="20" y="380" w="280" h="40">
+            <toggle name="toggle1" x="0" y="0" w="80" h="40"
+                    color="red" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="Toggle A" size="10" color="white"/>
+                <osc>/1/toggle1</osc>
+            </toggle>
+            
+            <toggle name="toggle2" x="100" y="0" w="80" h="40"
+                    color="green" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="Toggle B" size="10" color="white"/>
+                <osc>/1/toggle2</osc>
+            </toggle>
+            
+            <toggle name="toggle3" x="200" y="0" w="80" h="40"
+                    color="blue" local_off="false" scalef="0.0" scalet="1.0">
+                <label text="Toggle C" size="10" color="white"/>
+                <osc>/1/toggle3</osc>
+            </toggle>
+        </group>
+        
+        <!-- Info Label -->
+        <label name="info" x="20" y="440" w="280" h="40"
+               color="gray" size="10" text="Host: 192.168.x.x Port: 8000"/>
+        
+    </tabpage>
+    
+    <!-- Mariawa App Page -->
+    <tabpage name="Mariawa" scalef="1.0" scalet="1.0">
+        
+        <label name="title" x="20" y="20" w="280" h="40" 
+               color="white" size="20" text="Mariawa Controller"/>
+        
+        <!-- Gravity Control -->
+        <xy name="gravity" x="20" y="80" w="200" h="200"
+            color="purple" scalef="0.0" scalet="1.0">
+            <label text="Gravity" size="14" color="white"/>
+            <osc>/mariawa/gravity</osc>
+        </xy>
+        
+        <!-- Add Ball Button -->
+        <push name="addball" x="240" y="80" w="60" h="60"
+              color="orange" local_off="false" momentary="true">
+            <label text="Add Ball" size="10" color="white"/>
+            <osc>/mariawa/add_ball</osc>
+        </push>
+        
+        <!-- Clear Button -->
+        <push name="clear" x="240" y="160" w="60" h="60"
+              color="red" local_off="false" momentary="true">
+            <label text="Clear" size="10" color="white"/>
+            <osc>/mariawa/clear</osc>
+        </push>
+        
+        <!-- Physics Parameters -->
+        <group name="physics" x="20" y="300" w="280" h="120">
+            <fader name="friction" x="0" y="0" w="40" h="100"
+                   color="cyan" scalef="0.0" scalet="2.0">
+                <label text="Friction" size="8" color="white"/>
+                <osc>/mariawa/friction</osc>
+            </fader>
+            
+            <fader name="bounce" x="60" y="0" w="40" h="100"
+                   color="green" scalef="0.0" scalet="1.0">
+                <label text="Bounce" size="8" color="white"/>
+                <osc>/mariawa/bounce</osc>
+            </fader>
+            
+            <fader name="radius" x="120" y="0" w="40" h="100"
+                   color="yellow" scalef="5.0" scalet="50.0">
+                <label text="Size" size="8" color="white"/>
+                <osc>/mariawa/radius</osc>
+            </fader>
+        </group>
+        
+    </tabpage>
+    
+    <!-- Settings Page -->
+    <tabpage name="Settings" scalef="1.0" scalet="1.0">
+        
+        <label name="title" x="20" y="20" w="280" h="40" 
+               color="white" size="20" text="OSGA Settings"/>
+        
+        <!-- IP Configuration Display -->
+        <label name="config" x="20" y="80" w="280" h="100"
+               color="gray" size="12" 
+               text="Configure TouchOSC:\nHost: [Your OSGA IP]\nPort: 8000\n\nPress O key in simulator\nto toggle debug mode"/>
+        
+        <!-- Connection Status -->
+        <led name="status" x="140" y="200" w="40" h="40"
+             color="green" scalef="0.0" scalet="1.0">
+            <osc>/status</osc>
+        </led>
+        
+        <label name="statuslabel" x="100" y="250" w="120" h="20"
+               color="white" size="12" text="Connection Status"/>
+        
+    </tabpage>
+    
+</layout>

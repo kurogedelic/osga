@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="2" mode="0" orientation="vertical">
+    <tabpage name="Acidtest" scalef="1.0" scalet="1.0">
+        
+        <!-- Title -->
+        <label name="title" x="10" y="10" w="300" h="30" 
+               color="white" size="18" text="Acidtest Sequencer"/>
+        
+        <!-- Step Sequencer Grid -->
+        <multitoggle name="sequencer" x="10" y="50" w="300" h="120"
+                     color="yellow" number_x="16" number_y="4" 
+                     local_off="false" scalef="0.0" scalet="1.0">
+            <label text="Pattern" size="10" color="white"/>
+            <osc>/acidtest/step</osc>
+        </multitoggle>
+        
+        <!-- Play/Stop Controls -->
+        <group name="transport" x="10" y="180" w="300" h="50">
+            <push name="play" x="0" y="0" w="70" h="50"
+                  color="green" local_off="false" momentary="false">
+                <label text="Play" size="14" color="white"/>
+                <osc>/acidtest/play</osc>
+            </push>
+            
+            <push name="stop" x="80" y="0" w="70" h="50"
+                  color="red" local_off="false" momentary="false">
+                <label text="Stop" size="14" color="white"/>
+                <osc>/acidtest/stop</osc>
+            </push>
+            
+            <push name="clear" x="160" y="0" w="70" h="50"
+                  color="orange" local_off="false" momentary="true">
+                <label text="Clear" size="14" color="white"/>
+                <osc>/acidtest/clear</osc>
+            </push>
+            
+            <encoder name="tempo" x="240" y="0" w="50" h="50"
+                     color="cyan" scalef="60" scalet="200">
+                <label text="BPM" size="10" color="white"/>
+                <osc>/acidtest/tempo</osc>
+            </encoder>
+        </group>
+        
+        <!-- Filter Controls -->
+        <group name="filter" x="10" y="240" w="300" h="100">
+            <label name="filterlabel" x="0" y="0" w="300" h="20"
+                   color="white" size="12" text="Filter Section"/>
+            
+            <rotary name="cutoff" x="0" y="25" w="60" h="60"
+                    color="purple" scalef="20.0" scalet="20000.0">
+                <label text="Cutoff" size="10" color="white"/>
+                <osc>/acidtest/cutoff</osc>
+            </rotary>
+            
+            <rotary name="resonance" x="80" y="25" w="60" h="60"
+                    color="magenta" scalef="0.0" scalet="1.0">
+                <label text="Res" size="10" color="white"/>
+                <osc>/acidtest/resonance</osc>
+            </rotary>
+            
+            <rotary name="envelope" x="160" y="25" w="60" h="60"
+                    color="blue" scalef="0.0" scalet="1.0">
+                <label text="Env" size="10" color="white"/>
+                <osc>/acidtest/envelope</osc>
+            </rotary>
+            
+            <rotary name="decay" x="240" y="25" w="60" h="60"
+                    color="cyan" scalef="0.01" scalet="2.0">
+                <label text="Decay" size="10" color="white"/>
+                <osc>/acidtest/decay</osc>
+            </rotary>
+        </group>
+        
+        <!-- Oscillator Controls -->
+        <group name="oscillator" x="10" y="350" w="300" h="80">
+            <label name="osclabel" x="0" y="0" w="300" h="20"
+                   color="white" size="12" text="Oscillator"/>
+            
+            <multifader name="waveform" x="0" y="25" w="200" h="50"
+                        number="4" color="green">
+                <label text="Wave Mix" size="10" color="white"/>
+                <osc>/acidtest/wave</osc>
+            </multifader>
+            
+            <fader name="volume" x="220" y="25" w="40" h="50"
+                   color="red" scalef="0.0" scalet="1.0">
+                <label text="Vol" size="10" color="white"/>
+                <osc>/acidtest/volume</osc>
+            </fader>
+        </group>
+        
+    </tabpage>
+</layout>
