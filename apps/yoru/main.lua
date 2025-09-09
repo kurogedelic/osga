@@ -48,7 +48,7 @@ local yoru = {
 
 
 local NUM_STARS = 50
-local SCREEN_WIDTH = 240
+local SCREEN_WIDTH = 400
 local SCREEN_HEIGHT = 240
 local MAX_WIND_PARTICLES = 20
 local MAX_VISUAL_OBJECTS = 15

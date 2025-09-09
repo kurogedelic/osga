@@ -1,5 +1,7 @@
 -- osga/osga-sim/api/gfx.lua
 
+local fonts = require('api.font')
+
 local gfx = {
     -- Basic drawing functions
     clear = function(r, g, b)

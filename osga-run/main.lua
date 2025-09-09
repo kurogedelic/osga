@@ -163,6 +163,12 @@ function loadApp(appPath)
 end
 
 function love.load(args)
+    -- Update system resolution after Love2D initialization  
+    if osga and osga.system and osga.system.updateResolution then
+        osga.system.updateResolution()
+        print("Runtime resolution:", osga.system.width .. "x" .. osga.system.height)
+    end
+    
     love.graphics.setBackgroundColor(20 / 255, 20 / 255, 20 / 255)
     canvas = love.graphics.newCanvas(osga.system.width, osga.system.height)
     love.graphics.setDefaultFilter('nearest', 'nearest')

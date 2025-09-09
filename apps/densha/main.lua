@@ -23,7 +23,7 @@ local densha = {
     field = {
         x = 0,
         y = 0,
-        width = 240,
+        width = 400,
         height = 240
     },
     selected_parameter = 1,

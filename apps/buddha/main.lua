@@ -19,7 +19,7 @@ local buddha = {
         x = 0,
         y = 0,
         width = 240,
-        height = 240
+        height = 320
     },
     selected_parameter = 1,
     sound = {},

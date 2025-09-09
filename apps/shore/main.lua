@@ -22,11 +22,11 @@ local shore = {
     field = {
         x = 0,
         y = 0,
-        width = 240,
-        height = 240
+        width = 400,
+        height = 320
     },
     selected_parameter = 1,
-    horizonY = 120,
+    horizonY = 160,
     waveOffset = 0,
     waveSpeed = 1,
     wavesScrollY = 0,
@@ -96,7 +96,7 @@ local function initializeAnimations()
     for i = 1, moonReflectionCount do
         shore.reflectionLines[i] = {
             y = 140 + math.random(-10, 10),
-            x = 120 + math.random(-10, 10),
+            x = shore.field.width / 2 + math.random(-10, 10),
             w = 20 + math.random(-2, 2)
         }
     end
@@ -117,8 +117,8 @@ local function initializeAnimations()
     local starCount = 40
     for i = 1, starCount do
         shore.stars[i] = {
-            x = math.random(0, 240),
-            y = math.random(0, 120)
+            x = math.random(0, shore.field.width),
+            y = math.random(0, shore.horizonY)
         }
     end
 end
@@ -259,7 +259,7 @@ local function updateAnimations()
         for i, line in ipairs(shore.reflectionLines) do
             if math.random() < 0.1 then
                 line.y = 140 + math.random(-10, 10)
-                line.x = 120 + math.random(-10, 10)
+                line.x = shore.field.width / 2 + math.random(-10, 10)
                 line.w = 20 + math.random(-2, 2)
             end
         end
@@ -284,8 +284,8 @@ local function updateAnimations()
         shore.starTimer = 0
         for i, star in ipairs(shore.stars) do
             if math.random() < 0.1 then
-                star.x = math.random(0, 240)
-                star.y = math.random(0, 120)
+                star.x = math.random(0, shore.field.width)
+                star.y = math.random(0, shore.horizonY)
             end
         end
     end
@@ -303,13 +303,13 @@ local function drawSeaAnimation()
 
 
     osga.gfx.color(1, 1, 1)
-    osga.gfx.circle(120, 50, 15)
+    osga.gfx.circle(shore.field.width / 2, 50, 15)
     osga.gfx.color(0, 0, 0)
-    osga.gfx.circle(127, 45, 13)
+    osga.gfx.circle(shore.field.width / 2 + 7, 45, 13)
 
 
     osga.gfx.color(1, 1, 1)
-    osga.gfx.line(0, 115, 240, 115)
+    osga.gfx.line(0, 115, shore.field.width, 115)
 
 
     osga.gfx.color(1, 1, 1)
@@ -332,10 +332,10 @@ local function drawSeaAnimation()
 
     for i = 1, 5 do
         osga.gfx.color(1, 1, 1, 1 - 0.1 * i)
-        local waveY = 120 + (130 + i * 2 + shore.wavesScrollY) % shore.field.height
+        local waveY = shore.horizonY + (130 + i * 2 + shore.wavesScrollY) % shore.field.height
 
-        if waveY > 120 and waveY <= shore.field.height then
-            osga.gfx.line(0, waveY, 240, waveY)
+        if waveY > shore.horizonY and waveY <= shore.field.height then
+            osga.gfx.line(0, waveY, shore.field.width, waveY)
         end
     end
 end

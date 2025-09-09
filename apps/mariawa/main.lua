@@ -18,8 +18,8 @@ local lastSwA = false
 local lastSwB = false
 local lastSwR = false
 local field = {
-    x = 0,
-    y = 0,
+    x = (400 - 240) / 2,
+    y = (320 - 240) / 2,
     width = 240,
     height = 240
 }

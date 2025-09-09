@@ -13,7 +13,7 @@ function topbar.init()
     topbar.appInfo = nil
 
 
-    love.window.setMode(640, 520, { highdpi = false })
+    love.window.setMode(960, 660, { highdpi = false })
 end
 
 function topbar.updateButtonPositions()
@@ -67,16 +67,16 @@ function topbar.mousepressed(x, y, button)
             sy >= btn.y and sy <= btn.y + btn.h then
             if name == "hdpi" then
                 topbar.hdpi = not topbar.hdpi
-                love.window.setMode(topbar.scale == 1 and 320 or 640,
-                    topbar.scale == 1 and 320 or 520,
+                love.window.setMode(topbar.scale == 1 and 480 or 960,
+                    topbar.scale == 1 and 400 or 660,
                     { highdpi = topbar.hdpi })
             elseif name == "gyro" then
                 topbar.gyroEnabled = not topbar.gyroEnabled
             elseif name == "scale" then
                 topbar.scale = topbar.scale == 1 and 2 or 1
                 topbar.updateButtonPositions()
-                love.window.setMode(topbar.scale == 1 and 320 or 640,
-                    topbar.scale == 1 and 320 or 520,
+                love.window.setMode(topbar.scale == 1 and 480 or 960,
+                    topbar.scale == 1 and 400 or 660,
                     { highdpi = topbar.hdpi })
             end
             break

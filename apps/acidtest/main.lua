@@ -95,7 +95,7 @@ function app.init()
 end
 
 local function drawGrid()
-    local cellWidth = 30
+    local cellWidth = 50
     local cellHeight = 40
     local startX = 0
     local startY = 50

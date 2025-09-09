@@ -1,5 +1,6 @@
 -- apps/kumo/main.lua
 local app = {}
+local json = require('api.libs.json')
 
 app._meta = {
     name = "Kumo",
@@ -16,7 +17,8 @@ local selectedApp = nil
 local defaultIcon = nil
 
 -- Grid configuration
-local GRID_COLS = 4
+local SCREEN_WIDTH = 480
+local GRID_COLS = 5
 local ICON_SIZE = 64
 local PADDING = 20
 local VISIBLE_ROWS = 2
@@ -29,7 +31,8 @@ local scrollAnimationStart = 0
 local scrollAnimationDuration = 0.3 -- アニメーション期間（秒）
 
 -- Icon positioning
-local startX = 24 + (320 - (GRID_COLS * (ICON_SIZE + PADDING))) / 2
+local totalGridWidth = GRID_COLS * ICON_SIZE + (GRID_COLS - 1) * PADDING
+local startX = (SCREEN_WIDTH - totalGridWidth) / 2
 local startY = 34
 
 -- Icon sizes cache
@@ -80,15 +83,12 @@ end
 
 local function parseJSON(str)
     local orderedKeys = {}
-    for key in str:gmatch('"([^"]+)"%s*:') do
+    for key in str:gmatch([["([^"]+)"%s*:]]) do
         table.insert(orderedKeys, key)
     end
 
-    str = str:gsub('"([^"]-)"%s*:%s*', "[%1]=")
-    str = str:gsub('%[([^%]]-)%]', "['%1']")
-    local chunk = load("return " .. str)
-    if chunk then
-        local data = chunk()
+    local ok, data = pcall(json.decode, str)
+    if ok then
         return data, orderedKeys
     end
     return nil, nil
@@ -264,12 +264,12 @@ function app.draw(koto)
     local isScrollable = totalRows > VISIBLE_ROWS
 
     -- アプリアイコンの描画（スクロール範囲内のみ）
-    love.graphics.setScissor(0, startY, 320, VISIBLE_ROWS * ROW_HEIGHT)
+    love.graphics.setScissor(0, startY, SCREEN_WIDTH, VISIBLE_ROWS * ROW_HEIGHT)
 
     for i, app in ipairs(installedApps) do
         local row = math.floor((i - 1) / GRID_COLS)
         local col = (i - 1) % GRID_COLS
-        local x = startX + col * (ICON_SIZE + 8)
+        local x = startX + col * (ICON_SIZE + PADDING)
         local y = startY + (row * ROW_HEIGHT) - scrollPosition
 
         -- 表示域付近のアイコンのみ描画
@@ -353,7 +353,7 @@ function app.draw(koto)
         -- スクロールバー背景
         love.graphics.setColor(0.2, 0.2, 0.2, 0.5)
         love.graphics.rectangle("fill",
-            315,
+            SCREEN_WIDTH - 5,
             startY,
             5,
             VISIBLE_ROWS * ROW_HEIGHT
@@ -366,7 +366,7 @@ function app.draw(koto)
 
         love.graphics.setColor(0.5, 0.5, 0.5, 0.8)
         love.graphics.rectangle("fill",
-            315,
+            SCREEN_WIDTH - 5,
             handleY,
             5,
             handleHeight
@@ -377,9 +377,9 @@ function app.draw(koto)
             -- 上スクロール可能インジケータ
             love.graphics.setColor(1, 1, 1, 0.7)
             love.graphics.polygon("fill",
-                300, startY + 10,
-                310, startY + 20,
-                290, startY + 20
+                SCREEN_WIDTH - 20, startY + 10,
+                SCREEN_WIDTH - 10, startY + 20,
+                SCREEN_WIDTH - 30, startY + 20
             )
         end
 
@@ -387,9 +387,9 @@ function app.draw(koto)
             -- 下スクロール可能インジケータ
             love.graphics.setColor(1, 1, 1, 0.7)
             love.graphics.polygon("fill",
-                300, startY + VISIBLE_ROWS * ROW_HEIGHT - 10,
-                310, startY + VISIBLE_ROWS * ROW_HEIGHT - 20,
-                290, startY + VISIBLE_ROWS * ROW_HEIGHT - 20
+                SCREEN_WIDTH - 20, startY + VISIBLE_ROWS * ROW_HEIGHT - 10,
+                SCREEN_WIDTH - 10, startY + VISIBLE_ROWS * ROW_HEIGHT - 20,
+                SCREEN_WIDTH - 30, startY + VISIBLE_ROWS * ROW_HEIGHT - 20
             )
         end
     end

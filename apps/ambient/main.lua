@@ -21,7 +21,7 @@ local config = {
         x = 240,
         y = 0,
         width = 80,
-        height = 240
+        height = 320
     }
 }
 
